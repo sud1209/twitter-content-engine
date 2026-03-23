@@ -1,0 +1,59 @@
+{
+  "handle": "laajardni",
+  "display_name": "Sud",
+  "bio": "AI nerd. Cricket, Dota 2, books, experimental cooking. All personal.",
+  "avatar_initial": "S",
+  "publish_time_utc": "15:30",
+  "timezone": "Asia/Kolkata",
+  "profile_url": "https://x.com/laajardni",
+  "newsletter_url": "",
+  "pillars": [
+    "AI Innovations",
+    "Sports & Cricket",
+    "eSports & Dota 2",
+    "Literature",
+    "Gaming & Experimental Cooking"
+  ],
+  "cadence": {
+    "0": {"pillar": "AI Innovations",                "funnel": "TOFU"},
+    "1": {"pillar": "Sports & Cricket",              "funnel": "MOFU"},
+    "2": {"pillar": "eSports & Dota 2",              "funnel": "TOFU"},
+    "3": {"pillar": "Literature",                    "funnel": "MOFU"},
+    "4": {"pillar": "Gaming & Experimental Cooking", "funnel": "TOFU"},
+    "5": {"pillar": "AI Innovations",                "funnel": "MOFU"},
+    "6": {"pillar": "flex",                          "funnel": "TOFU"}
+  },
+  "playbooks": {
+    "voice":    "docs/playbooks/voice-playbook-sud.md",
+    "twitter":  "docs/playbooks/twitter-playbook-sud.md",
+    "strategy": "docs/playbooks/x-posts-strategy-sud.md"
+  },
+  "pillar_keywords": {
+    "AI Innovations": [
+      "AI agents", "LLM", "Claude", "Gemini", "GPT", "model collapse",
+      "inference cost", "foundation model", "AI regulation", "AI safety",
+      "agentic AI", "multimodal", "open source AI", "vibe coding"
+    ],
+    "Sports & Cricket": [
+      "Test cricket", "IPL", "BCCI", "Rohit Sharma", "Jasprit Bumrah",
+      "Virat Kohli", "T20 World Cup", "cricket strategy", "DRS",
+      "spin bowling", "India cricket"
+    ],
+    "eSports & Dota 2": [
+      "Dota 2", "The International", "TI", "Dota patch", "SEA Dota",
+      "carry meta", "offlane", "draft theory", "eSports India",
+      "pro circuit Dota", "Dota 2 patch notes"
+    ],
+    "Literature": [
+      "book recommendation", "reading", "fiction", "non-fiction",
+      "author", "novel", "short story", "narrative", "literary fiction",
+      "what to read", "books 2026"
+    ],
+    "Gaming & Experimental Cooking": [
+      "indie game", "game design", "game release", "cooking experiment",
+      "recipe fail", "food science", "fermentation", "sourdough",
+      "game review", "steam sale"
+    ]
+  },
+  "benchmark_accounts": ["Iyervval", "ruchirsharma_1", "mujifren"]
+}
