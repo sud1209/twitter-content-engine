@@ -66,7 +66,7 @@ def compute_engagement_score(favorites: int, retweets: int) -> int:
 # ---------------------------------------------------------------------------
 
 def filter_original_tweets(tweets: list[dict]) -> list[dict]:
-    """Remove retweets. Keep only Nik's original content."""
+    """Remove retweets. Keep only original content."""
     return [t for t in tweets if not t["is_retweet"]]
 
 

@@ -1,6 +1,6 @@
 """
 Trend Scanner — D2
-Scans X competitor timelines + RSS feeds for trending topics relevant to Nik's pillars.
+Scans X competitor timelines + RSS feeds for trending topics relevant to configured pillars.
 Usage: python scripts/trend_scanner.py
 Output: prints trend context to stdout
 """

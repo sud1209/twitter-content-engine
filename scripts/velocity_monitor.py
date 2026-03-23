@@ -1,7 +1,7 @@
 """
 Velocity Monitor — Phase 2 Feature 1
 Polls X API at T+30 and T+60 after publishing.
-Notifies Nik if post is gaining above-average traction.
+Notifies the user if a post is gaining above-average traction.
 """
 
 import os

@@ -1,6 +1,6 @@
 """
 X Publisher — D4
-Posts approved tweets to @NikhaarShah via Tweepy.
+Posts approved tweets via Tweepy.
 Main post at 15:00 UTC, link reply at 15:02 UTC.
 """
 

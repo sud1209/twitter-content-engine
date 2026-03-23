@@ -38,7 +38,7 @@ def notify_no_approved_posts() -> None:
 
 
 def notify_spike(topic: str, suggested_pillar: str, headline_count: int) -> None:
-    """Alert Nik that a topic is spiking in the RSS feeds."""
+    """Alert the user that a topic is spiking in the RSS feeds."""
     notify(
         title="@{get_config()['handle']} — Trending Now",
         message=(
