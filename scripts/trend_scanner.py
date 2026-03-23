@@ -37,6 +37,9 @@ def _competitor_handles():
 def _pillar_keywords():
     return get_config().get("pillar_keywords", {})
 
+def _pillars():
+    return get_config().get("pillars", [])
+
 
 def scan_rss_feeds(feeds: Optional[List[str]] = None) -> list[dict]:
     """Fetch and parse RSS feeds. Returns list of {title, summary, link, source} dicts."""
@@ -113,17 +116,16 @@ def rank_topics(topics: list[dict], pillar: str, n: int = 5) -> list[dict]:
 
 def rank_pillars(all_topics: list[dict], exclude_pillar: str, n: int = 3) -> list[str]:
     """Rank pillars by trending relevance. Returns top n pillar names, excluding exclude_pillar."""
-    cfg = get_config()
-    pillars = [p for p in cfg.get("pillars", []) if p != exclude_pillar]
-    keywords = cfg.get("pillar_keywords", {})
+    pillars = [p for p in _pillars() if p != exclude_pillar]
+    keywords = _pillar_keywords()
 
     scores = []
     for pillar in pillars:
-        kws = [kw.lower() for kw in keywords.get(pillar, [])]
+        kws = keywords.get(pillar, [])
         score = 0
         for topic in all_topics:
             text = (topic.get("title", "") + " " + topic.get("summary", "")).lower()
-            score += sum(1 for kw in kws if kw in text)
+            score += sum(1 for kw in kws if kw.lower() in text)
         scores.append((pillar, score))
 
     scores.sort(key=lambda x: x[1], reverse=True)
