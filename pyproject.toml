@@ -1,7 +1,24 @@
 [project]
 name = "twitter-content-engine"
 version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
-requires-python = ">=3.12"
-dependencies = []
+requires-python = ">=3.10"
+description = "Personal Twitter/X content engine — config-driven, UV-managed"
+dependencies = [
+    "openai>=1.0",
+    "tweepy>=4.14",
+    "feedparser>=6.0",
+    "python-dotenv>=1.0",
+    "flask>=3.0",
+    "apscheduler>=3.10",
+    "plyer>=2.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "pytest-mock>=3.14",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
