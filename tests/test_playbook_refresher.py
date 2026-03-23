@@ -295,3 +295,17 @@ def test_run_refresh_running_flag_set_then_cleared(tmp_path, monkeypatch):
     status = pr.get_status()
     assert status["running"] is False
     assert status["done"] is True
+
+
+def test_no_nik_references_in_string_literals():
+    """No string literal in playbook_refresher contains 'Nik'."""
+    import ast, inspect
+    from scripts import playbook_refresher
+    source = inspect.getsource(playbook_refresher)
+    tree = ast.parse(source)
+    violations = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            if "Nik" in node.value:
+                violations.append(f"Line {node.lineno}: {node.value!r}")
+    assert not violations, "Found 'Nik' in string literals:\n" + "\n".join(violations)

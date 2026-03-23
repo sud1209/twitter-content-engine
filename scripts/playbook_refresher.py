@@ -1,6 +1,6 @@
 """
 Playbook Refresher — Phase 2 Feature 5
-Pulls benchmark posts + Nik's recent posts, synthesizes with Claude,
+Pulls benchmark posts + user's recent posts, synthesizes with Claude,
 appends dated Trend Update sections to playbooks. Append-only, never overwrites.
 """
 
@@ -72,7 +72,7 @@ def fetch_benchmark_posts(client_x) -> list[str]:
 
 
 def fetch_own_posts() -> list[str]:
-    """Load Nik's last N published posts from queue."""
+    """Load the user's last N published posts from queue."""
     from scripts.post_queue import load_queue
     queue = load_queue()
     published = [p for p in queue if p.get("status") == "published"]
@@ -92,10 +92,10 @@ def synthesize_with_claude(benchmark_posts: list[str], own_posts: list[str], pla
 
 You will receive:
 1. Recent posts from top creators in the space (benchmark)
-2. Nik's own recent published posts
+2. The user's own recent published posts
 3. The current {playbook_key} playbook content
 
-Your job: Write a concise "Trend Update" section that identifies 3-5 actionable insights based on what's working in the benchmark posts vs Nik's current approach. Focus on patterns, hooks, or formats that are gaining traction.
+Your job: Write a concise "Trend Update" section that identifies 3-5 actionable insights based on what's working in the benchmark posts vs the user's current approach. Focus on patterns, hooks, or formats that are gaining traction.
 
 Rules:
 - Output ONLY the section content (no markdown fences, no intro text)
@@ -107,7 +107,7 @@ Rules:
     user_message = f"""## Benchmark posts (top creators, recent):
 {benchmark_block}
 
-## Nik's recent published posts:
+## Your recent published posts:
 {own_block}
 
 ## Current {playbook_key} playbook (for context only):
