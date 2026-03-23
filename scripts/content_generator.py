@@ -31,7 +31,7 @@ def load_playbooks() -> dict[str, str]:
     return result
 
 
-def build_system_prompt(pillar: str, funnel: str) -> str:
+def build_system_prompt(pillar: str, funnel: str, num_drafts: int = NUM_DRAFTS) -> str:
     playbooks = load_playbooks()
     cfg = get_config()
     prompt = f"""You are the content engine for @{cfg['handle']}, a {cfg['bio']}.
@@ -49,7 +49,7 @@ def build_system_prompt(pillar: str, funnel: str) -> str:
 - Content pillar: {pillar}
 - Funnel stage: {funnel}
 
-Your job is to write {NUM_DRAFTS} distinct post variants for today's pillar. Each must:
+Your job is to write {num_drafts} distinct post variants for today's pillar. Each must:
 1. Pass all Six Core Laws and the Never List from the Voice Guide
 2. Use a specific hook (data point, bold claim, or vivid scenario — never vague)
 3. Map clearly to the {pillar} pillar
@@ -75,7 +75,7 @@ A post that sounds like it was written by a language model fails, even if the da
 Format your response as a numbered list:
 1. [post text]
 2. [post text]
-...{NUM_DRAFTS}. [post text]
+...{num_drafts}. [post text]
 
 Write only the post text. No labels, no commentary."""
 
@@ -126,11 +126,11 @@ def parse_drafts(raw: str) -> list[str]:
     return [d for d in drafts if d]
 
 
-def generate(pillar: str, funnel: str, trend_context: str) -> list[str]:
+def generate(pillar: str, funnel: str, trend_context: str, num_drafts: int = NUM_DRAFTS) -> list[str]:
     """Call Claude API to generate draft posts. Returns list of post strings."""
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-    system = build_system_prompt(pillar=pillar, funnel=funnel)
-    user_message = f"Trending context for today:\n\n{trend_context}\n\nWrite the {NUM_DRAFTS} post variants now."
+    system = build_system_prompt(pillar=pillar, funnel=funnel, num_drafts=num_drafts)
+    user_message = f"Trending context for today:\n\n{trend_context}\n\nWrite the {num_drafts} post variants now."
 
     response = client.chat.completions.create(
         model=MODEL,
