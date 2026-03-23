@@ -91,6 +91,13 @@ def fetch_competitor_posts() -> list[dict]:
         return []
 
 
+def get_all_topics() -> list[dict]:
+    """Fetch and combine RSS + competitor posts. Returns raw unfiltered topic list."""
+    rss_topics = scan_rss_feeds()
+    competitor_topics = fetch_competitor_posts()
+    return rss_topics + competitor_topics
+
+
 def rank_topics(topics: list[dict], pillar: str, n: int = 5) -> list[dict]:
     """Score topics by keyword relevance to the given pillar. Returns top n."""
     keywords = _pillar_keywords().get(pillar, [])
@@ -120,10 +127,7 @@ def build_trend_context(topics: list[dict], pillar: str, funnel: str) -> str:
 
 def run(pillar: str, funnel: str) -> str:
     """Full scan pipeline: RSS + X competitor timelines. Returns trend context string."""
-    rss_topics = scan_rss_feeds()
-    competitor_topics = fetch_competitor_posts()
-    all_topics = rss_topics + competitor_topics
-
+    all_topics = get_all_topics()
     top = rank_topics(all_topics, pillar=pillar, n=7)
     if not top:
         top = all_topics[:7]

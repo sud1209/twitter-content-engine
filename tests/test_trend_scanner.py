@@ -43,3 +43,37 @@ def test_build_trend_context_returns_string():
     assert isinstance(context, str)
     assert "AI for Real Estate" in context
     assert "TOFU" in context
+
+
+from scripts.trend_scanner import get_all_topics, run
+
+
+def test_get_all_topics_returns_combined_list(mocker):
+    mock_feed = MagicMock()
+    mock_feed.entries = [
+        MagicMock(title="AI news", summary="detail", link="http://example.com/1"),
+    ]
+    mocker.patch("scripts.trend_scanner.feedparser.parse", return_value=mock_feed)
+    mocker.patch("scripts.trend_scanner.fetch_competitor_posts", return_value=[
+        {"title": "competitor post", "summary": "text", "link": "http://x.com/1", "source": "@handle"}
+    ])
+    topics = get_all_topics()
+    assert isinstance(topics, list)
+    assert len(topics) >= 2  # 1 RSS + 1 competitor
+    assert "title" in topics[0]
+
+
+def test_get_all_topics_returns_empty_list_on_failure(mocker):
+    mocker.patch("scripts.trend_scanner.feedparser.parse", side_effect=Exception("network error"))
+    mocker.patch("scripts.trend_scanner.fetch_competitor_posts", return_value=[])
+    topics = get_all_topics()
+    assert isinstance(topics, list)
+
+
+def test_run_still_returns_string_after_refactor(mocker):
+    mocker.patch("scripts.trend_scanner.get_all_topics", return_value=[
+        {"title": "AI mortgage automation", "summary": "", "link": "http://example.com", "source": "rss"},
+    ])
+    result = run(pillar="AI Innovations", funnel="TOFU")
+    assert isinstance(result, str)
+    assert "AI Innovations" in result
