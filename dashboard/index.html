@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@NikhaarShah — Daily Review</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <div class="avatar" id="header-avatar">·</div>
+      <div class="header-identity">
+        <div class="header-handle" id="header-handle">Loading…</div>
+        <div class="header-sub">Daily Post Review</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="header-meta">
+        <span id="day-info"></span>
+        <span class="dot">·</span>
+        <span>Publishes <strong>8:00 AM PDT</strong></span>
+      </div>
+      <button id="skip-btn" class="btn-skip">Skip Today</button>
+      <div class="refresh-wrap">
+        <button id="refresh-btn" class="btn-refresh">Refresh Playbooks</button>
+        <span id="playbook-last-updated" class="playbook-updated"></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" id="tab-today" onclick="switchTab('today')">Today</button>
+    <button class="tab-btn" id="tab-history" onclick="switchTab('history')">History</button>
+  </div>
+
+  <div class="page-body">
+    <div id="tab-content-today">
+      <div id="generate-bar">
+        <button id="generate-btn" class="btn-generate">Generate New Posts</button>
+        <span id="generate-status" class="generate-status">Drafts 8 posts · scores each · surfaces top 5</span>
+      </div>
+      <div id="posts-container">
+        <div class="empty-state" id="loading-state">
+          <div class="spinner"></div>
+          <p>Loading today's posts…</p>
+        </div>
+      </div>
+    </div>
+    <div id="tab-content-history" style="display:none">
+      <div id="history-controls">
+        <select id="filter-pillar" onchange="renderHistory()">
+          <option value="">All pillars</option>
+          <option>AI for Real Estate</option>
+          <option>Non-QM Lending Optimization</option>
+          <option>CEO/Founder AI Productivity</option>
+          <option>Industry Crossovers</option>
+        </select>
+        <select id="sort-by" onchange="renderHistory()">
+          <option value="date">Sort by date</option>
+          <option value="score">Sort by score</option>
+          <option value="engagement">Sort by engagement</option>
+        </select>
+      </div>
+      <div id="history-container"></div>
+    </div>
+  </div>
+
+  <!-- Skip Today Confirm Modal -->
+  <div id="skip-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box modal-box--sm">
+      <h2 class="modal-title">Skip Today?</h2>
+      <p class="modal-sub">All pending posts will be marked as skipped. Nothing will be published today. This cannot be undone.</p>
+      <div class="modal-actions">
+        <button id="confirm-skip-btn" class="btn-reject">Yes, Skip Today</button>
+        <button id="cancel-skip-btn" class="btn-edit">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Refresh Playbooks Confirm Modal -->
+  <div id="refresh-confirm-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box modal-box--sm">
+      <h2 class="modal-title">Refresh Playbooks?</h2>
+      <p class="modal-sub">This will pull recent posts from benchmark accounts and your own history, then use AI to generate new trend insights. You'll review a diff before anything is written to disk.</p>
+      <div class="modal-actions">
+        <button id="confirm-refresh-start-btn" class="btn-approve">Yes, Refresh</button>
+        <button id="cancel-refresh-start-btn" class="btn-edit">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Playbook Refresh Modal -->
+  <div id="refresh-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box">
+      <h2 class="modal-title">Playbook Trend Update Preview</h2>
+      <p class="modal-sub">Review the proposed additions before writing to disk. This is append-only — existing content is not changed.</p>
+      <div id="refresh-diff" class="diff-preview"></div>
+      <div class="modal-actions">
+        <button id="confirm-refresh-btn" class="btn-approve">Write to Playbooks</button>
+        <button id="cancel-refresh-btn" class="btn-edit">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
