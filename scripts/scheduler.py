@@ -4,7 +4,7 @@ Runs the daily content pipeline on a schedule.
 Keep this process running in the background (started by setup wizard).
 
 Schedule:
-- 07:00 UTC (midnight PDT): Generate + score posts, notify Nik
+- 07:00 UTC (midnight PDT): Generate + score posts, notify user
 - 15:00 UTC (08:00 PDT): Publish approved posts
 """
 
@@ -13,6 +13,7 @@ import json
 from datetime import datetime
 from apscheduler.schedulers.blocking import BlockingScheduler
 from dotenv import load_dotenv
+from scripts.config_loader import get_config
 
 load_dotenv()
 
@@ -20,7 +21,7 @@ scheduler = BlockingScheduler(timezone="UTC")
 
 
 def run_morning_pipeline() -> None:
-    """Generate + score posts and notify Nik they're ready."""
+    """Generate + score posts and notify user they're ready."""
     print(f"[{datetime.utcnow()}] Starting morning pipeline...")
 
     # Clear yesterday's queue
@@ -61,7 +62,7 @@ def run_morning_pipeline() -> None:
             updated.append(post)
     q.save_queue(updated)
 
-    # Notify Nik
+    # notify user
     ready = [p for p in updated if p["status"] in ("ready", "below_target")]
     from scripts.notifier import notify_posts_ready
     notify_posts_ready(len(ready))
@@ -130,14 +131,19 @@ def run_spike_check() -> None:
             print(f"Spike alert fired: {keyword} ({spike['count']} headlines)")
 
 
-# Schedule: generate at 07:00 UTC, publish at 15:00 UTC, spike check every 2 hours, analysis at 09:00 UTC
-scheduler.add_job(run_morning_pipeline, "cron", hour=7, minute=0)
-scheduler.add_job(run_analysis_job, "cron", hour=9, minute=0)
-scheduler.add_job(run_publish_pipeline, "cron", hour=15, minute=0)
-scheduler.add_job(run_spike_check, "interval", hours=2)
+def schedule_jobs():
+    cfg = get_config()
+    publish_time = cfg.get("publish_time_utc", "15:00")
+    pub_hour, pub_minute = map(int, publish_time.split(":"))
+
+    scheduler.add_job(run_morning_pipeline,  "cron",     hour=7, minute=0)
+    scheduler.add_job(run_analysis_job,      "cron",     hour=9, minute=0)
+    scheduler.add_job(run_publish_pipeline,  "cron",     hour=pub_hour, minute=pub_minute)
+    scheduler.add_job(run_spike_check,       "interval", hours=2)
 
 
 if __name__ == "__main__":
+    schedule_jobs()
     print("Scheduler started. Waiting for scheduled jobs...")
     print("  07:00 UTC — generate + score posts")
     print("  09:00 UTC — performance analysis")
