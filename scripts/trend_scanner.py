@@ -111,6 +111,30 @@ def rank_topics(topics: list[dict], pillar: str, n: int = 5) -> list[dict]:
     return scored[:n]
 
 
+def rank_pillars(all_topics: list[dict], exclude_pillar: str, n: int = 3) -> list[str]:
+    """Rank pillars by trending relevance. Returns top n pillar names, excluding exclude_pillar."""
+    cfg = get_config()
+    pillars = [p for p in cfg.get("pillars", []) if p != exclude_pillar]
+    keywords = cfg.get("pillar_keywords", {})
+
+    scores = []
+    for pillar in pillars:
+        kws = [kw.lower() for kw in keywords.get(pillar, [])]
+        score = 0
+        for topic in all_topics:
+            text = (topic.get("title", "") + " " + topic.get("summary", "")).lower()
+            score += sum(1 for kw in kws if kw in text)
+        scores.append((pillar, score))
+
+    scores.sort(key=lambda x: x[1], reverse=True)
+
+    # If no keyword hits at all, fall back to config order
+    if all(s == 0 for _, s in scores):
+        return pillars[:n]
+
+    return [pillar for pillar, _ in scores[:n]]
+
+
 def build_trend_context(topics: list[dict], pillar: str, funnel: str) -> str:
     """Format top topics into a context string for the content generator prompt."""
     lines = [

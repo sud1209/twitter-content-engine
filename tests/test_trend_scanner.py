@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from scripts.trend_scanner import scan_rss_feeds, rank_topics, build_trend_context, RSS_FEEDS
+from scripts.trend_scanner import scan_rss_feeds, rank_topics, build_trend_context, RSS_FEEDS, get_all_topics, run, rank_pillars
 
 
 def test_rss_feeds_list_is_not_empty():
@@ -45,9 +45,6 @@ def test_build_trend_context_returns_string():
     assert "TOFU" in context
 
 
-from scripts.trend_scanner import get_all_topics, run
-
-
 def test_get_all_topics_returns_combined_list(mocker):
     mock_feed = MagicMock()
     mock_feed.entries = [
@@ -77,3 +74,46 @@ def test_run_still_returns_string_after_refactor(mocker):
     result = run(pillar="AI Innovations", funnel="TOFU")
     assert isinstance(result, str)
     assert "AI Innovations" in result
+
+
+MOCK_CONFIG = {
+    "pillars": ["AI Innovations", "Sports & Cricket", "eSports & Dota 2", "Literature", "Gaming & Experimental Cooking"],
+    "pillar_keywords": {
+        "AI Innovations": ["AI", "LLM"],
+        "Sports & Cricket": ["cricket", "IPL", "BCCI"],
+        "eSports & Dota 2": ["Dota", "eSports"],
+        "Literature": ["book", "novel"],
+        "Gaming & Experimental Cooking": ["game", "cooking"],
+    }
+}
+
+
+def test_rank_pillars_excludes_primary(mocker):
+    mocker.patch("scripts.trend_scanner.get_config", return_value=MOCK_CONFIG)
+    topics = [{"title": "cricket IPL match", "summary": ""}]
+    result = rank_pillars(topics, exclude_pillar="AI Innovations", n=3)
+    assert "AI Innovations" not in result
+    assert len(result) == 3
+
+
+def test_rank_pillars_orders_by_score(mocker):
+    mocker.patch("scripts.trend_scanner.get_config", return_value=MOCK_CONFIG)
+    topics = [
+        {"title": "cricket IPL BCCI match", "summary": ""},  # 3 keyword hits for Sports & Cricket
+        {"title": "cricket strategy", "summary": ""},         # 1 more hit
+        {"title": "Dota 2 patch", "summary": ""},             # 1 hit for eSports
+        {"title": "book recommendation", "summary": ""},      # 1 hit for Literature
+    ]
+    result = rank_pillars(topics, exclude_pillar="AI Innovations", n=3)
+    assert result[0] == "Sports & Cricket"
+
+
+def test_rank_pillars_fallback_on_zero_hits(mocker):
+    mocker.patch("scripts.trend_scanner.get_config", return_value=MOCK_CONFIG)
+    topics = [{"title": "completely unrelated news", "summary": ""}]
+    result = rank_pillars(topics, exclude_pillar="AI Innovations", n=3)
+    assert len(result) == 3
+    assert "AI Innovations" not in result
+    # Fallback should return pillars in config order (excluding primary)
+    expected_order = ["Sports & Cricket", "eSports & Dota 2", "Literature"]
+    assert result == expected_order
