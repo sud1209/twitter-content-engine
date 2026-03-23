@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-One-click setup wizard for @NikhaarShah content engine.
-Run this once on Nik's machine. Never run again unless resetting.
+One-click setup wizard for the Twitter/X content engine.
+Run this once after cloning. Never run again unless resetting.
 """
 
 import os
@@ -12,25 +12,18 @@ import threading
 import time
 
 REQUIRED_KEYS = [
-    ("X_CONSUMER_KEY", "X API Consumer Key"),
-    ("X_CONSUMER_SECRET", "X API Consumer Secret"),
-    ("X_BEARER_TOKEN", "X API Bearer Token"),
-    ("X_ACCESS_TOKEN", "X API Access Token (for @NikhaarShah)"),
-    ("X_ACCESS_TOKEN_SECRET", "X API Access Token Secret (for @NikhaarShah)"),
-    ("ANTHROPIC_API_KEY", "Anthropic (Claude) API Key"),
+    ("X_CONSUMER_KEY",        "X API Consumer Key"),
+    ("X_CONSUMER_SECRET",     "X API Consumer Secret"),
+    ("X_BEARER_TOKEN",        "X API Bearer Token"),
+    ("X_ACCESS_TOKEN",        "X API Access Token"),
+    ("X_ACCESS_TOKEN_SECRET", "X API Access Token Secret"),
+    ("OPENAI_API_KEY",        "OpenAI API Key"),
 ]
-
-
-def check_python_version():
-    if sys.version_info < (3, 10):
-        print("Error: Python 3.10 or higher required.")
-        sys.exit(1)
-    print(f"Python {sys.version_info.major}.{sys.version_info.minor} — OK")
 
 
 def install_dependencies():
     print("\nInstalling dependencies...")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt", "-q"])
+    subprocess.check_call(["uv", "sync"])
     print("Dependencies installed.")
 
 
@@ -46,7 +39,7 @@ def collect_api_keys() -> dict:
     <!DOCTYPE html>
     <html>
     <head>
-      <title>@NikhaarShah Setup</title>
+      <title>Content Engine Setup</title>
       <style>
         body { font-family: -apple-system, sans-serif; max-width: 560px; margin: 60px auto; padding: 0 20px; }
         h1 { font-size: 1.3rem; margin-bottom: 8px; }
@@ -58,7 +51,7 @@ def collect_api_keys() -> dict:
       </style>
     </head>
     <body>
-      <h1>@NikhaarShah Content Engine Setup</h1>
+      <h1>Content Engine Setup</h1>
       <p>Enter your API keys below. These are saved locally to .env and never shared.</p>
       <form id="setup-form">
         {% for key, label in keys %}
@@ -110,7 +103,7 @@ def write_env_file(keys: dict) -> None:
     for key, _ in REQUIRED_KEYS:
         lines.append(f"{key}={keys.get(key, '')}")
     lines += [
-        "POST_TIME_UTC=15:00",
+        "POST_TIME_UTC=15:30",
         "DASHBOARD_PORT=3000",
     ]
     with open(".env", "w") as f:
@@ -139,7 +132,7 @@ def register_mcp_for_claude_desktop() -> None:
         config = json.load(f)
 
     cwd = os.path.abspath(".")
-    config.setdefault("mcpServers", {})["nikhaarshah-content"] = {
+    config.setdefault("mcpServers", {})["twitter-content-engine"] = {
         "command": "python",
         "args": [os.path.join(cwd, "scripts", "server.py")],
         "env": {"PYTHONPATH": cwd},
@@ -151,8 +144,7 @@ def register_mcp_for_claude_desktop() -> None:
 
 
 if __name__ == "__main__":
-    print("=== @NikhaarShah Content Engine Setup ===\n")
-    check_python_version()
+    print("=== Content Engine Setup ===\n")
     install_dependencies()
     keys = collect_api_keys()
     write_env_file(keys)
@@ -160,5 +152,5 @@ if __name__ == "__main__":
 
     print("\nSetup complete.")
     print("To start the content engine, run:")
-    print("  python scripts/scheduler.py   (keeps running in background)")
-    print("  python scripts/server.py      (dashboard at http://localhost:3000)")
+    print("  uv run python scripts/scheduler.py   (keeps running in background)")
+    print("  uv run python scripts/server.py      (dashboard at http://localhost:3000)")
