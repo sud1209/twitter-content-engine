@@ -126,3 +126,21 @@ def load_calibration() -> dict:
     if data.get("post_count", 0) < 5:
         return None
     return data
+
+
+def get_lowest_engagement_pillar(pillars: list[str]) -> str:
+    """
+    Return the pillar with the lowest average engagement score this week.
+    Falls back to pillars[0] if calibration is unavailable or no requested
+    pillar has data yet.
+    """
+    calibration = load_calibration()
+    if not calibration:
+        return pillars[0]
+
+    by_pillar = calibration.get("by_pillar", {})
+    known = {p: by_pillar[p]["avg_engagement"] for p in pillars if p in by_pillar}
+    if not known:
+        return pillars[0]
+
+    return min(known, key=known.get)

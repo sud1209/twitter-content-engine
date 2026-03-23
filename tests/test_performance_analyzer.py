@@ -47,3 +47,62 @@ def test_load_calibration_returns_none_when_too_few_posts(tmp_path, monkeypatch)
     path.write_text(json.dumps({"post_count": 3, "insights": []}))
     monkeypatch.setattr("scripts.performance_analyzer.CALIBRATION_PATH", str(path))
     assert load_calibration() is None
+
+
+# --- get_lowest_engagement_pillar ---
+
+def test_get_lowest_engagement_pillar_returns_lowest(tmp_path, monkeypatch):
+    """Returns the pillar with the lowest avg_engagement when calibration exists."""
+    import json
+    calibration = {
+        "post_count": 10,
+        "by_pillar": {
+            "AI Innovations":               {"posts": 3, "avg_score": 8.5, "avg_engagement": 120.0},
+            "Sports & Cricket":             {"posts": 2, "avg_score": 7.0, "avg_engagement": 45.0},
+            "eSports & Dota 2":             {"posts": 2, "avg_score": 8.0, "avg_engagement": 80.0},
+            "Literature":                   {"posts": 2, "avg_score": 7.5, "avg_engagement": 30.0},
+            "Gaming & Experimental Cooking":{"posts": 1, "avg_score": 7.0, "avg_engagement": 60.0},
+        },
+    }
+    cal_path = tmp_path / "score_calibration.json"
+    cal_path.write_text(json.dumps(calibration))
+    monkeypatch.setattr(
+        "scripts.performance_analyzer.CALIBRATION_PATH", str(cal_path)
+    )
+    from scripts.performance_analyzer import get_lowest_engagement_pillar
+    pillars = list(calibration["by_pillar"].keys())
+    result = get_lowest_engagement_pillar(pillars)
+    assert result == "Literature"  # avg_engagement 30.0 is lowest
+
+
+def test_get_lowest_engagement_pillar_falls_back_when_no_calibration(tmp_path, monkeypatch):
+    """Returns first pillar in list when calibration file does not exist."""
+    monkeypatch.setattr(
+        "scripts.performance_analyzer.CALIBRATION_PATH",
+        str(tmp_path / "nonexistent.json"),
+    )
+    from scripts.performance_analyzer import get_lowest_engagement_pillar
+    pillars = ["AI Innovations", "Sports & Cricket", "Literature"]
+    result = get_lowest_engagement_pillar(pillars)
+    assert result == "AI Innovations"
+
+
+def test_get_lowest_engagement_pillar_falls_back_when_no_known_pillars(tmp_path, monkeypatch):
+    """Falls back to first pillar when none of the requested pillars appear in calibration data."""
+    import json
+    calibration = {
+        "post_count": 5,
+        "by_pillar": {
+            "Some Other Pillar": {"posts": 5, "avg_score": 8.0, "avg_engagement": 100.0},
+        },
+    }
+    cal_path = tmp_path / "score_calibration.json"
+    cal_path.write_text(json.dumps(calibration))
+    monkeypatch.setattr(
+        "scripts.performance_analyzer.CALIBRATION_PATH", str(cal_path)
+    )
+    from scripts.performance_analyzer import get_lowest_engagement_pillar
+    pillars = ["AI Innovations", "Literature", "Sports & Cricket"]
+    # None of the pillars appear in calibration → known dict is empty → fall back
+    result = get_lowest_engagement_pillar(pillars)
+    assert result == "AI Innovations"  # pillars[0]
