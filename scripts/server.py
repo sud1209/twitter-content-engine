@@ -19,7 +19,7 @@ def _run_posts_pipeline():
     try:
         import uuid
         from scripts.cadence import get_todays_pillar
-        from scripts.trend_scanner import run as get_trends
+        from scripts.trend_scanner import get_all_topics, rank_pillars, rank_topics, build_trend_context
         from scripts.content_generator import generate
         from scripts.post_scorer import regenerate_if_below_floor
         from scripts.post_queue import add_post
@@ -30,28 +30,70 @@ def _run_posts_pipeline():
         save_queue(queue)
 
         today = get_todays_pillar()
-        trend_context = get_trends(pillar=today["pillar"], funnel=today["funnel"])
-        drafts = generate(pillar=today["pillar"], funnel=today["funnel"], trend_context=trend_context)
+        pillar = today["pillar"]
+        funnel = today["funnel"]
 
-        # Score all candidates with retry, then keep top 5
-        candidates = []
-        for draft in drafts:
+        # Fetch all topics once — reused for trend context and pillar ranking
+        all_topics = get_all_topics()
+
+        # Pick 3 trending non-primary pillars
+        trending_pillars = rank_pillars(all_topics, exclude_pillar=pillar, n=3)
+
+        all_posts = []
+
+        # PRIMARY PILLAR: generate 8 candidates, keep top 5
+        primary_topics = rank_topics(all_topics, pillar=pillar, n=7)
+        if not primary_topics:
+            primary_topics = all_topics[:7]
+        primary_context = build_trend_context(primary_topics, pillar, funnel)
+        primary_drafts = generate(pillar, funnel, primary_context, num_drafts=8)
+
+        primary_candidates = []
+        for draft in primary_drafts:
             post = {
                 "id": str(uuid.uuid4()),
                 "text": draft,
-                "pillar": today["pillar"],
-                "funnel": today["funnel"],
+                "pillar": pillar,
+                "funnel": funnel,
                 "score": None,
                 "score_breakdown": None,
                 "status": "pending_score",
             }
-            candidates.append(regenerate_if_below_floor(post))
+            primary_candidates.append(regenerate_if_below_floor(post))
 
-        # Sort by score descending, keep top 5
-        candidates.sort(key=lambda p: p.get("score") or 0, reverse=True)
-        for post in candidates[:5]:
+        primary_candidates.sort(key=lambda p: p.get("score") or 0, reverse=True)
+        all_posts.extend(primary_candidates[:5])
+
+        # NON-PRIMARY PILLARS: generate 3 candidates each, keep top 1
+        for np_pillar in trending_pillars:
+            try:
+                np_topics = rank_topics(all_topics, pillar=np_pillar, n=7)
+                if not np_topics:
+                    np_topics = all_topics[:7]
+                np_context = build_trend_context(np_topics, np_pillar, funnel)
+                np_drafts = generate(np_pillar, funnel, np_context, num_drafts=3)
+
+                np_candidates = []
+                for draft in np_drafts:
+                    post = {
+                        "id": str(uuid.uuid4()),
+                        "text": draft,
+                        "pillar": np_pillar,
+                        "funnel": funnel,
+                        "score": None,
+                        "score_breakdown": None,
+                        "status": "pending_score",
+                    }
+                    np_candidates.append(regenerate_if_below_floor(post))
+
+                np_candidates.sort(key=lambda p: p.get("score") or 0, reverse=True)
+                all_posts.append(np_candidates[0])
+            except Exception as e:
+                print(f"Warning: failed to generate post for pillar '{np_pillar}': {e}")
+
+        for post in all_posts:
             add_post(post)
-        save_queue(load_queue())
+
         with _posts_refresh_lock:
             _posts_refresh_status.update({"running": False, "done": True})
     except Exception as e:
