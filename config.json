@@ -7,6 +7,10 @@
   "timezone": "Asia/Kolkata",
   "profile_url": "https://x.com/laajardni",
   "newsletter_url": "",
+  "models": {
+    "generation": "claude-haiku-4-5-20251001",
+    "scoring": "claude-haiku-4-5-20251001"
+  },
   "pillars": [
     "AI Innovations",
     "Sports & Cricket",
