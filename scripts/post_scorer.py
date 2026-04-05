@@ -1,6 +1,6 @@
 """
 Post Scorer — D3
-Batch-scores draft posts using Claude as judge. Max 4 API calls for any N posts.
+Batch-scores draft posts using Claude as judge. Max 5 API calls for any N posts.
 Usage: python -m scripts.post_scorer
 """
 
@@ -229,7 +229,7 @@ Return ONLY valid JSON array. No explanation, no markdown fences."""
 
 def score_all_posts(posts: list[dict]) -> list[dict]:
     """
-    Batch score → batch regen failing → batch rescore. Max 4 API calls total.
+    Batch score → batch regen failing → batch rescore. Max 5 API calls total.
     All posts are returned; below-floor posts get status='below_target'.
     """
     if not posts:
