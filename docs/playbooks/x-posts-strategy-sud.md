@@ -80,3 +80,16 @@ Updated automatically via **Refresh Playbooks** in the dashboard. The command:
 3. Appends a dated "Trend Update" section with 3-5 actionable insights
 
 Run monthly, or after any significant change in engagement patterns.
+
+
+## Trend Update — 2026-03-23
+
+1. **Engaging Visuals**: Benchmark posts highlight the importance of eye-catching images or short videos. Incorporate visuals related to cricket matches, game highlights, or cooking experiments to capture attention and increase shares.
+
+2. **Thread Formats**: Creators are effectively utilizing thread formats, particularly for complex or layered subjects like AI innovations or literature analyses. Consider breaking down dense topics into engaging threads that provide bite-sized insights, prompting readers to engage with each post in the thread.
+
+3. **Strong Emotional Hooks**: Posts that open with a bold or controversial statement tend to generate higher engagement. For content pillars like Sports and Literature, start with a provocative claim or question (e.g., "Why the BCCI's latest decision could ruin Indian cricket forever").
+
+4. **Interactive Questions**: Incorporate community-focused questions more explicitly in MOFU posts to boost engagement. Instead of just sharing opinions, invite your audience to share their takes or experiences related to the topic (e.g., "Have you ever abandoned a book you thought you'd love?").
+
+5. **Utilizing Real-Time Trends**: Creators are leveraging ongoing events or trends (like cricket matches, tournaments, and AI news). Align your content with current events to capitalize on trending discussions, using timely commentary to increase relevance and engagement.

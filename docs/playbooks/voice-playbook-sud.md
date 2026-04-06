@@ -115,3 +115,16 @@ not rhetorical. [one sentence of why you're confused].
 ---
 
 *No archive available at launch. This playbook will be updated via the Refresh Playbooks command once posts accumulate.*
+
+
+## Trend Update — 2026-03-23
+
+1. **Engagement Hooks**: Include stronger, more specific hooks in your posts. Consider starting with, “nobody talks about [specific player’s technique] and it’s driving me insane,” to capture attention immediately while aligning with your voice profile.
+
+2. **Cross-Domain Connections**: Benchmark creators are gaining traction by making surprising cross-domain connections. Expanding upon the idea of Dota 2 strategy applying to cricket selection with clear examples can engage both gaming and sports enthusiasts while differentiating your content.
+
+3. **Opinionated Statements**: Craft posts around bold, clear opinions like, “hot take: the IPL selection criteria are failing its stars,” to inspire discussions and boost engagement. This approach not only rallies fans but also positions you as a thought leader.
+
+4. **Curiosity-Driven Questions**: Use open-ended questions to foster dialogue after making a strong claim. For example, “genuinely curious — what’s the logic behind player trades in Dota 2 vs. cricket?” can prompt insightful interactions while maintaining your opinionated stance.
+
+5. **Experiment Updates**: Regularly update your audience with the results of your cooking experiments or learnings in Dota 2 strategies. An "update: last week’s attempt at [specific dish] went unexpectedly well" not only personalizes the content but invites followers to share their own experiences.
