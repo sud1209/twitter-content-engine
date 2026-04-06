@@ -120,7 +120,7 @@ _WEAK_CTA_PHRASES = [
 
 _SOFT_QUESTION_ENDINGS = [
     "what's your ", "how are you ", "what are you ",
-    "how do you ", "are your", "what does your ",
+    "how do you ", "what does your ",
 ]
 
 
@@ -231,7 +231,6 @@ Write only the post text. No labels, no commentary."""
     try:
         insights = _load_benchmark_insights()
         if insights:
-            cfg = get_config()
             accounts = cfg.get("benchmark_accounts", [])
             patterns = insights.get("patterns", {})
             top_posts = insights.get("top_posts", [])[:3]
@@ -319,6 +318,8 @@ def generate(pillar: str, funnel: str, trend_context: str, num_drafts: int = NUM
             print(f"  [DRAFT {i}] REJECTED -- {reason}: {draft[:60]}", flush=True)
 
     print(f"[GENERATE] {len(valid)}/{len(drafts)} passed validation.", flush=True)
+    if not valid:
+        print(f"[GENERATE] WARNING: 0/{len(drafts)} drafts passed validation — returning empty list")
     return valid
 
 

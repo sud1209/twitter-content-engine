@@ -168,7 +168,7 @@ def test_generate_uses_num_drafts_in_prompt(monkeypatch, tmp_path):
     from scripts.content_generator import generate
     generate(pillar="AI Innovations", funnel="TOFU", trend_context="ctx", num_drafts=3)
 
-    assert "3" in captured["user"]
+    assert "3 posts" in captured["user"]
 
 
 # ── _load_benchmark_insights ──────────────────────────────────────────────────
