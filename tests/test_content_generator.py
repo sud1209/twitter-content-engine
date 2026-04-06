@@ -169,3 +169,149 @@ def test_generate_uses_num_drafts_in_prompt(monkeypatch, tmp_path):
     generate(pillar="AI Innovations", funnel="TOFU", trend_context="ctx", num_drafts=3)
 
     assert "3" in captured["user"]
+
+
+# ── _load_benchmark_insights ──────────────────────────────────────────────────
+
+def test_load_benchmark_insights_returns_none_when_file_absent(tmp_path, monkeypatch):
+    """Returns None when data/benchmark_insights.json does not exist."""
+    monkeypatch.chdir(tmp_path)
+    from scripts.content_generator import _load_benchmark_insights
+    result = _load_benchmark_insights()
+    assert result is None
+
+
+def test_load_benchmark_insights_returns_none_when_json_malformed(tmp_path, monkeypatch):
+    """Returns None when the file contains invalid JSON."""
+    monkeypatch.chdir(tmp_path)
+    data_dir = tmp_path / "data"
+    data_dir.mkdir()
+    (data_dir / "benchmark_insights.json").write_text("not valid json {{{{")
+    from scripts.content_generator import _load_benchmark_insights
+    result = _load_benchmark_insights()
+    assert result is None
+
+
+def test_load_benchmark_insights_returns_none_when_required_keys_missing(tmp_path, monkeypatch):
+    """Returns None when top_posts or patterns keys are absent/empty."""
+    import json as _json
+    monkeypatch.chdir(tmp_path)
+    data_dir = tmp_path / "data"
+    data_dir.mkdir()
+
+    # Missing both keys
+    (data_dir / "benchmark_insights.json").write_text(_json.dumps({"other_key": "value"}))
+    from scripts.content_generator import _load_benchmark_insights
+    assert _load_benchmark_insights() is None
+
+    # top_posts present but patterns missing
+    (data_dir / "benchmark_insights.json").write_text(_json.dumps({"top_posts": [{"text": "x"}]}))
+    assert _load_benchmark_insights() is None
+
+    # patterns present but top_posts missing
+    (data_dir / "benchmark_insights.json").write_text(_json.dumps({"patterns": {"hook_patterns": ["a"]}}))
+    assert _load_benchmark_insights() is None
+
+
+# ── distill_playbooks ─────────────────────────────────────────────────────────
+
+def test_distill_playbooks_writes_json_to_distilled_path(tmp_path, monkeypatch):
+    """distill_playbooks() writes a valid JSON file to _DISTILLED_PATH."""
+    import json as _json
+
+    monkeypatch.chdir(tmp_path)
+
+    fake_voice = tmp_path / "voice.md"
+    fake_voice.write_text("voice content")
+    fake_twitter = tmp_path / "twitter.md"
+    fake_twitter.write_text("twitter content")
+    fake_strategy = tmp_path / "strategy.md"
+    fake_strategy.write_text("strategy content")
+
+    distilled_path = str(tmp_path / "data" / "playbook_distilled.json")
+    monkeypatch.setattr("scripts.content_generator._DISTILLED_PATH", distilled_path)
+    monkeypatch.setattr(
+        "scripts.content_generator.get_config",
+        lambda: {
+            "playbooks": {
+                "voice": str(fake_voice),
+                "twitter": str(fake_twitter),
+                "strategy": str(fake_strategy),
+            },
+            "models": {"generation": "gpt-4o-mini"},
+        },
+    )
+
+    llm_return = _json.dumps({"voice": "v rules", "twitter": "t rules", "strategy": "s rules"})
+    monkeypatch.setattr("scripts.content_generator.llm_complete", lambda **kwargs: llm_return)
+
+    from scripts.content_generator import distill_playbooks
+    distill_playbooks()
+
+    import os
+    assert os.path.exists(distilled_path)
+    with open(distilled_path, encoding="utf-8") as f:
+        result = _json.load(f)
+    assert result["voice"] == "v rules"
+    assert result["twitter"] == "t rules"
+    assert result["strategy"] == "s rules"
+
+
+# ── build_system_prompt — benchmark injection ─────────────────────────────────
+
+def test_build_system_prompt_injects_benchmark_content(tmp_path, monkeypatch):
+    """When _load_benchmark_insights returns a valid dict, its content appears in the prompt."""
+    monkeypatch.setattr(
+        "scripts.content_generator._DISTILLED_PATH",
+        str(tmp_path / "nonexistent.json"),
+    )
+    fake_voice = tmp_path / "voice.md"
+    fake_voice.write_text("voice content")
+    fake_twitter = tmp_path / "twitter.md"
+    fake_twitter.write_text("twitter content")
+    fake_strategy = tmp_path / "strategy.md"
+    fake_strategy.write_text("strategy content")
+
+    monkeypatch.setattr(
+        "scripts.content_generator.get_config",
+        lambda: {
+            "handle": "testuser",
+            "bio": "test bio",
+            "playbooks": {
+                "voice": str(fake_voice),
+                "twitter": str(fake_twitter),
+                "strategy": str(fake_strategy),
+            },
+            "models": {"generation": "gpt-4o-mini"},
+            "benchmark_accounts": ["Iyervval", "ruchirsharma_1"],
+        },
+    )
+
+    fake_insights = {
+        "top_posts": [
+            {
+                "account": "Iyervval",
+                "text": "Unique hook pattern text that should appear in the prompt",
+                "replies": 10,
+                "retweets": 5,
+                "likes": 50,
+                "score": 99,
+            }
+        ],
+        "patterns": {
+            "hook_patterns": ["distinctive_hook_formula_abc"],
+            "cta_patterns": ["reply-bait question"],
+            "engagement_drivers": ["specificity over vagueness"],
+        },
+    }
+    monkeypatch.setattr(
+        "scripts.content_generator._load_benchmark_insights",
+        lambda: fake_insights,
+    )
+
+    from scripts.content_generator import build_system_prompt
+    prompt = build_system_prompt(pillar="AI Innovations", funnel="TOFU")
+
+    assert "distinctive_hook_formula_abc" in prompt
+    assert "Unique hook pattern text that should appear in the prompt" in prompt
+    assert "Iyervval" in prompt
