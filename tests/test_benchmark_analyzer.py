@@ -32,6 +32,7 @@ def test_compute_account_stats_top_posts():
     assert stats["post_count"] == 3
     # Top post should be the one with score=126
     assert stats["top_posts"][0]["score"] == 126
+    assert stats["avg_likes"] == round((10 + 5 + 1) / 3, 1)
 
 
 def test_fetch_account_posts_returns_empty_without_client():
@@ -95,3 +96,44 @@ def test_extract_insights_returns_empty_dict_on_llm_failure():
         "cta_patterns": [],
         "engagement_drivers": [],
     }
+
+
+def test_run_benchmark_writes_output_files(tmp_path, monkeypatch):
+    import json as _json
+    from scripts.benchmark_analyzer import run_benchmark
+
+    monkeypatch.setattr("scripts.benchmark_analyzer.BENCHMARK_REPORT_PATH", str(tmp_path / "report.json"))
+    monkeypatch.setattr("scripts.benchmark_analyzer.BENCHMARK_INSIGHTS_PATH", str(tmp_path / "insights.json"))
+    monkeypatch.setattr("scripts.benchmark_analyzer.fetch_account_posts", lambda client, handle, max_results=50: [])
+    monkeypatch.setattr("scripts.benchmark_analyzer.fetch_own_stats", lambda: {
+        "post_count": 0, "avg_likes": 0.0, "avg_retweets": 0.0,
+        "avg_replies": 0.0, "avg_score": 0.0, "median_score": 0.0,
+        "top_posts": [], "post_count_with_engagement": 0
+    })
+    monkeypatch.setattr("scripts.benchmark_analyzer.extract_insights", lambda posts: {
+        "hook_patterns": ["hook1"], "specificity_techniques": [],
+        "cta_patterns": [], "engagement_drivers": []
+    })
+    monkeypatch.setattr("scripts.benchmark_analyzer._build_x_client", lambda: None)
+
+    # patch get_config to return minimal config
+    monkeypatch.setattr(
+        "scripts.benchmark_analyzer.get_config",
+        lambda: {"benchmark_accounts": ["acc1"], "handle": "testuser", "models": {"scoring": "claude-haiku-4-5-20251001"}}
+    )
+
+    # need to create the data dir since we're writing to tmp_path directly
+    report = run_benchmark()
+
+    assert (tmp_path / "report.json").exists()
+    assert (tmp_path / "insights.json").exists()
+
+    with open(tmp_path / "report.json") as f:
+        report_data = _json.load(f)
+    assert "accounts" in report_data
+    assert "gaps" in report_data
+
+    with open(tmp_path / "insights.json") as f:
+        insights_data = _json.load(f)
+    assert "top_posts" in insights_data
+    assert "patterns" in insights_data

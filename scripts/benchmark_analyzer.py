@@ -12,6 +12,7 @@ Once run, scorer and generator pick up benchmark_insights.json automatically.
 import json
 import logging
 import os
+import re
 import statistics
 from datetime import datetime
 
@@ -138,9 +139,11 @@ def fetch_own_stats() -> dict:
     posts = []
     for p in published:
         e = p["actual_engagement"]
+        raw_text = p.get("text", "")
+        text_preview = (raw_text[:100] + "...") if len(raw_text) > 100 else raw_text
         posts.append({
             "id": p.get("id", ""),
-            "text": p.get("text", "")[:100] + "...",
+            "text": text_preview,
             "likes": e.get("likes", 0),
             "retweets": e.get("retweets", 0),
             "replies": e.get("replies", 0),
@@ -190,11 +193,10 @@ Respond with valid JSON only, no other text:
             user=prompt,
             max_tokens=800,
         )
-        if raw.startswith("```"):
-            parts = raw.split("```")
-            raw = parts[1] if len(parts) > 1 else raw
-            if raw.startswith("json"):
-                raw = raw[4:]
+        # find the JSON object within the response
+        match = re.search(r'\{.*\}', raw, re.DOTALL)
+        if match:
+            raw = match.group()
         return json.loads(raw.strip())
     except Exception as e:
         logger.error(f"Failed to extract insights: {e}")
@@ -228,18 +230,20 @@ def run_benchmark(max_posts: int = MAX_POSTS_PER_ACCOUNT) -> dict:
             "score_gap": round(account_stats["avg_score"] - own_stats["avg_score"], 1),
         }
 
+    generated_at = datetime.utcnow().isoformat() + "Z"
+
     top_for_insights = sorted(all_posts, key=lambda p: p["score"], reverse=True)[:TOP_N_FOR_INSIGHTS]
     patterns = extract_insights(top_for_insights)
 
     insights = {
-        "generated_at": datetime.utcnow().isoformat() + "Z",
+        "generated_at": generated_at,
         "source_accounts": benchmark_accounts,
         "top_posts": top_for_insights,
         "patterns": patterns,
     }
 
     report = {
-        "generated_at": datetime.utcnow().isoformat() + "Z",
+        "generated_at": generated_at,
         "accounts": accounts_data,
         "own": own_stats,
         "gaps": gaps,
@@ -268,7 +272,6 @@ def load_report() -> dict | None:
 
 
 if __name__ == "__main__":
-    import logging
     logging.basicConfig(level=logging.INFO)
     report = run_benchmark()
     own = report.get("own", {})
