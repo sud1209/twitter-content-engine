@@ -16,3 +16,4 @@ __pycache__/
 *.pyc
 .pytest_cache/
 docs/superpowers/
+.claude/settings.json
