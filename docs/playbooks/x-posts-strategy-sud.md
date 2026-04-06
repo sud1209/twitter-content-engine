@@ -1,4 +1,4 @@
-# Sud (@laajardni) — X Posts Strategy
+# Your Name (@YOUR_HANDLE) — X Posts Strategy
 **Version:** 1.0 | 2026-03-23
 
 ---

@@ -1,8 +1,8 @@
-# Competitive Benchmark — @laajardni
+# Competitive Benchmark — @YOUR_HANDLE
 
 **Date:** 2026-03-23
-**Accounts studied:** @Iyervval, @ruchirsharma_1, @mujifren
-**Purpose:** Feed into D1 playbooks and content-generator prompt context
+**Accounts studied:** @karpathy, @paraschopra, @sidin
+**Purpose:** Feed into playbooks and content-generator prompt context
 
 > **Note:** This framework doc was generated at repo setup time. Live post analysis and hook examples will be appended automatically by `playbook_refresher` on first run. Sections marked `[PENDING FIRST RUN]` will be populated with real data then.
 
@@ -10,7 +10,7 @@
 
 ## Key Findings
 
-> [PENDING FIRST RUN] — `playbook_refresher` will append a synthesised "Key Findings" section after fetching benchmark posts and comparing them to @laajardni's published posts.
+> [PENDING FIRST RUN] — `playbook_refresher` will append a synthesised "Key Findings" section after fetching benchmark posts and comparing them to @YOUR_HANDLE's published posts.
 
 **Space context (Indian English-language Twitter, 2026):**
 - Indian tech/culture Twitter operates at higher wit density than Western equivalents — dry humour, self-deprecation, and cricket metaphors land consistently; earnest motivational content does not
@@ -27,16 +27,18 @@
 
 ---
 
-## @Iyervval
+## @karpathy
 
 ### About
 > [PENDING FIRST RUN] — Populate with account bio, follower count, niche, and main content themes after first benchmark pull.
+
+**Context note:** Andrej Karpathy — former OpenAI/Tesla, AI educator and researcher. One of the highest-signal AI accounts on Twitter: practitioner takes, deep technical literacy, minimal hype. Benchmark for AI Innovations pillar — how to post about AI in a way that earns respect from builders, not just clout from spectators.
 
 **What to look for:**
 - Which topics generate the most saves (evergreen value)
 - Which topics generate the most replies (opinion-triggering)
 - Hook structure: does the account lead with data, opinion, or story?
-- Voice markers: formal vs. conversational, humour register, use of Indian cultural references
+- How technical depth is balanced with accessibility for a general audience
 
 ### Content Formats
 > [PENDING FIRST RUN]
@@ -66,7 +68,7 @@
 - Thread frequency vs. single-post frequency
 - Consistency pattern: regular schedule or burst posting?
 
-### Key Takeaways for @laajardni
+### Key Takeaways for @YOUR_HANDLE
 > [PENDING FIRST RUN]
 
 **Template:**
@@ -76,18 +78,18 @@
 
 ---
 
-## @ruchirsharma_1
+## @paraschopra
 
 ### About
 > [PENDING FIRST RUN]
 
-**Context note:** Ruchir Sharma is a macro investor, author (*The Rise and Fall of Nations*, *Breakout Nations*), and one of the most-read English-language voices on Indian and emerging-market economics. If this is the same account, content will skew toward macro trends, geopolitics, and long-cycle economic observations — high-prestige lane that overlaps with @laajardni's AI Innovations and Literature pillars.
+**Context note:** Paras Chopra — founder of Wingify, Indian entrepreneur and intellectual. Posts at the intersection of product thinking, rationality, AI, and unconventional ideas. High-prestige lane: precise, opinionated, non-generic. Benchmark for how to post smart takes on AI and tech without sounding like everyone else.
 
 **What to look for:**
-- How economic and macro content is translated into accessible Twitter-length takes
-- Whether the account uses data-heavy hooks or narrative hooks
-- How India-specific takes are framed for a global vs. domestic audience
-- Tone: analytical, opinionated, or balanced?
+- How product/tech insights are framed as broadly relatable observations
+- Ratio of personal experience posts vs. general takes
+- How contrarian opinions are delivered without being combative
+- Tone: analytical, opinionated, or exploratory?
 
 ### Content Formats
 > [PENDING FIRST RUN]
@@ -98,20 +100,22 @@
 ### Posting Cadence
 > [PENDING FIRST RUN]
 
-### Key Takeaways for @laajardni
+### Key Takeaways for @YOUR_HANDLE
 > [PENDING FIRST RUN]
 
 ---
 
-## @mujifren
+## @sidin
 
 ### About
 > [PENDING FIRST RUN]
 
+**Context note:** Sidin Vadukut — Indian journalist, author, and cultural commentator. One of the sharpest voices on Indian English Twitter: cricket, books, culture, and dry wit. Benchmark for Sports & Cricket and Literature pillars — how to write about cricket with genuine insight and how to make book/culture content land for a broad Indian audience.
+
 **What to look for:**
-- Primary content lane (tech, culture, gaming, humour, commentary?)
-- Voice register: how personal or public is the posting style?
-- Whether they mix niches (like @laajardni's multi-pillar setup) or go single-topic
+- How cricket commentary is timed relative to matches and news cycles
+- Voice register for literary and cultural content vs. sports content
+- Whether they mix niches or maintain separate lanes per topic
 - Engagement style: do they reply and engage, or broadcast only?
 
 ### Content Formats
@@ -123,12 +127,12 @@
 ### Posting Cadence
 > [PENDING FIRST RUN]
 
-### Key Takeaways for @laajardni
+### Key Takeaways for @YOUR_HANDLE
 > [PENDING FIRST RUN]
 
 ---
 
-## Synthesized Tactics for @laajardni
+## Synthesized Tactics for @YOUR_HANDLE
 
 > [PENDING FIRST RUN] — `playbook_refresher` will append a synthesised tactics section after first live analysis. The framework below gives starting principles to apply until then.
 
@@ -182,7 +186,7 @@ The Indian tech audience is particularly sensitive to AI-generated content — t
 ---
 
 ### Benchmark Engagement Targets
-*Starting targets for @laajardni at early-stage (sub-5K followers). Update after 20+ published posts.*
+*Starting targets at early-stage (sub-5K followers). Update after 20+ published posts.*
 
 | Metric | Baseline (acceptable) | Strong | Exceptional for niche |
 |---|---|---|---|

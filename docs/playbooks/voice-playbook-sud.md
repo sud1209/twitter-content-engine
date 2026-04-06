@@ -1,4 +1,4 @@
-# Sud (@laajardni) — Voice & Engagement Playbook
+# Your Name (@YOUR_HANDLE) — Voice & Engagement Playbook
 **Version:** 1.0 | 2026-03-23
 **Scope:** Personal account — no product, no employer affiliation
 

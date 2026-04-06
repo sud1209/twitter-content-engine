@@ -1,4 +1,4 @@
-# Sud (@laajardni) — Twitter Playbook
+# Your Name (@YOUR_HANDLE) — Twitter Playbook
 **Version:** 1.0 | 2026-03-23
 
 ---
@@ -18,7 +18,7 @@
 2. **Can I falsify it?** — if nobody could disagree, it's not a hook. It's a caption.
 3. **Can nobody else say this?** — if any account in your niche could post this, rewrite until only you can.
 
-### Hook formulas for Sud's pillars
+### Hook formulas for your pillars
 
 **AI Innovations:**
 - `[Model/tool] just [specific thing it can do]. [one implication nobody's saying].`

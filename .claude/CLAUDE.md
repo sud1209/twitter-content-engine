@@ -2,7 +2,7 @@
 
 ## What this repo is
 
-A config-driven, AI-assisted Twitter/X content engine for user **Sud** (`@laajardni`). Built as a portfolio project demonstrating a full content automation system. Adapted from an earlier bot built for `@NikhaarShah` (that repo lives at `c:\Users\sudar\OneDrive\Desktop\twitter-bot` — read-only reference).
+A config-driven, AI-assisted Twitter/X content engine. Built as a portfolio project demonstrating a full content automation system.
 
 **Stack:** Python 3.10+, `uv` (package manager), Claude Haiku (via `anthropic` SDK, for generation + scoring), OpenAI (for `playbook_refresher.py`), Tweepy, Flask (dashboard on localhost:3000), APScheduler, feedparser, plyer.
 
@@ -142,10 +142,10 @@ Everything else passes (119 tests as of scoring/model overhaul). Do not attempt 
 
 ---
 
-## Competitive benchmarks (Sud)
+## Competitive benchmarks
 
-- `@Iyervval`
-- `@ruchirsharma_1`
-- `@mujifren`
+- `@karpathy` — AI Innovations benchmark (practitioner takes, high signal)
+- `@paraschopra` — tech/product/AI (Indian English, opinionated, precise)
+- `@sidin` — cricket + literature + culture (Indian English, dry wit)
 
 Space: Indian English-language Twitter. Audience rewards dry wit, specificity, and insider knowledge. Earnest motivational content does not land. Cricket content peaks during live matches.

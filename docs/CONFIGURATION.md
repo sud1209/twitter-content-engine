@@ -181,7 +181,7 @@ If no calibration data exists (no published posts yet, no Twitter export in `dat
 
 ### `benchmark_accounts`
 - **Type:** array of strings (X/Twitter handles, without `@`)
-- **Example:** `["Iyervval", "ruchirsharma_1", "mujifren"]`
+- **Example:** `["karpathy", "paraschopra", "sidin"]`
 - **Controls:** The competitive accounts analyzed by `scripts/benchmark_analyzer.py`. Their recent posts are fetched via the X API and used to populate `docs/competitive-benchmark-sud.md` and inject insights into the scorer and generator prompts.
 - **Effect of changing:** Add or remove handles to change the competitive set. The analyzer has no hardcoded handles anywhere in code — this array is the sole source.
 - **Note:** Fetching requires `X_BEARER_TOKEN` to be set in `.env`. The analyzer returns empty stats gracefully when the token is absent — no crash, no injection.
