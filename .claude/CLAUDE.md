@@ -4,7 +4,7 @@
 
 A config-driven, AI-assisted Twitter/X content engine for user **Sud** (`@laajardni`). Built as a portfolio project demonstrating a full content automation system. Adapted from an earlier bot built for `@NikhaarShah` (that repo lives at `c:\Users\sudar\OneDrive\Desktop\twitter-bot` — read-only reference).
 
-**Stack:** Python 3.10+, `uv` (package manager), OpenAI `gpt-4o-mini`, Tweepy, Flask (dashboard on localhost:3000), APScheduler, feedparser, plyer.
+**Stack:** Python 3.10+, `uv` (package manager), Claude Haiku (via `anthropic` SDK, for generation + scoring), OpenAI (for `playbook_refresher.py`), Tweepy, Flask (dashboard on localhost:3000), APScheduler, feedparser, plyer.
 
 ---
 
@@ -73,7 +73,8 @@ Flask server on port 3000 (configurable via `DASHBOARD_PORT` env var). MCP serve
 | `config.json` | All user config — pillars, cadence, playbook paths, handle, publish time |
 | `scripts/config_loader.py` | `get_config()` singleton |
 | `scripts/cadence.py` | `get_todays_pillar()` — flex + BOFU logic lives here |
-| `scripts/content_generator.py` | Builds prompt from cadence + playbooks, calls OpenAI |
+| `scripts/llm_client.py` | Provider-agnostic `complete()` — routes to Anthropic or OpenAI by model name prefix |
+| `scripts/content_generator.py` | Builds prompt from cadence + playbooks, calls Claude via llm_client; distills playbook cache; validates posts |
 | `scripts/performance_analyzer.py` | `analyze_performance()` + `get_lowest_engagement_pillar()` |
 | `scripts/scheduler.py` | APScheduler — always use `schedule_jobs()` |
 | `scripts/post_queue.py` | Queue management (replaces deleted `queue.py`) |
@@ -81,6 +82,7 @@ Flask server on port 3000 (configurable via `DASHBOARD_PORT` env var). MCP serve
 | `scripts/x_publisher.py` | Tweepy publisher |
 | `scripts/trend_scanner.py` | RSS + X feed scanner |
 | `scripts/velocity_monitor.py` | T+30 / T+60 traction alerts |
+| `scripts/benchmark_analyzer.py` | Standalone benchmark fetch + LLM insight extraction. Run manually to populate `data/benchmark_insights.json` |
 | `scripts/notifier.py` | Desktop notifications via plyer |
 | `scripts/server.py` | Flask dashboard + API endpoints |
 | `first_run.py` | Setup wizard — runs `uv sync`, validates `.env`, writes MCP config |
@@ -99,7 +101,8 @@ X_CONSUMER_SECRET=
 X_BEARER_TOKEN=
 X_ACCESS_TOKEN=
 X_ACCESS_TOKEN_SECRET=
-OPENAI_API_KEY=          # NOT ANTHROPIC_API_KEY — this engine uses OpenAI
+ANTHROPIC_API_KEY=       # generation + scoring both use Claude (via llm_client.py)
+OPENAI_API_KEY=          # still used by playbook_refresher.py
 POST_TIME_UTC=15:30
 DASHBOARD_PORT=3000
 ```
@@ -114,9 +117,7 @@ Run with: `uv run pytest tests/ -v`
 
 **Known pre-existing failures (do NOT fix — inherited from source repo):**
 - `tests/test_playbook_refresher.py` — 8 tests fail because they patch `scripts.playbook_refresher.PLAYBOOK_PATHS` (a constant that doesn't exist; the module uses a `_playbook_paths()` function instead). Fixing requires rewriting either the tests or the module interface — deferred.
-- `tests/test_content_generator.py` — ImportError for `PLAYBOOK_PATHS` for the same reason. File is excluded from collection.
-
-Everything else (80 tests) passes. Do not attempt to fix the above unless explicitly asked.
+Everything else passes (119 tests as of scoring/model overhaul). Do not attempt to fix the above unless explicitly asked.
 
 ---
 
@@ -137,7 +138,7 @@ Everything else (80 tests) passes. Do not attempt to fix the above unless explic
 - **Deferred import in `cadence.py`**: `from scripts.performance_analyzer import get_lowest_engagement_pillar` is imported inside the `if pillar == "flex":` block, not at module top. This avoids a potential circular import and keeps the default path (non-flex days) fast.
 - **BOFU dormancy in `cadence.py`**: The newsletter check lives here (not in `content_generator.py`) because cadence is the single source of truth for pillar+funnel. The generator just consumes whatever `get_todays_pillar()` returns.
 - **`uv` not `pip`**: All dependency management uses `uv`. Run `uv sync` to install, `uv run pytest` to test, `uv run python` to execute scripts. Do not use `pip install`.
-- **OpenAI not Anthropic**: The source repo had `ANTHROPIC_API_KEY` in `.env.example` by mistake. This repo correctly uses `OPENAI_API_KEY` everywhere.
+- **Model-agnostic via `llm_client.py`**: `scripts/llm_client.py` provides a single `complete(model, system, user)` function that routes to Anthropic (`claude-*`) or OpenAI (everything else) based on the model name prefix. Model names live in `config.json["models"]`. Default models are `claude-haiku-4-5-20251001` for both generation and scoring.
 
 ---
 
