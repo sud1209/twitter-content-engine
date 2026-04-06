@@ -283,14 +283,14 @@ def test_build_system_prompt_injects_benchmark_content(tmp_path, monkeypatch):
                 "strategy": str(fake_strategy),
             },
             "models": {"generation": "gpt-4o-mini"},
-            "benchmark_accounts": ["Iyervval", "ruchirsharma_1"],
+            "benchmark_accounts": ["karpathy", "paraschopra"],
         },
     )
 
     fake_insights = {
         "top_posts": [
             {
-                "account": "Iyervval",
+                "account": "karpathy",
                 "text": "Unique hook pattern text that should appear in the prompt",
                 "replies": 10,
                 "retweets": 5,
@@ -314,4 +314,4 @@ def test_build_system_prompt_injects_benchmark_content(tmp_path, monkeypatch):
 
     assert "distinctive_hook_formula_abc" in prompt
     assert "Unique hook pattern text that should appear in the prompt" in prompt
-    assert "Iyervval" in prompt
+    assert "karpathy" in prompt

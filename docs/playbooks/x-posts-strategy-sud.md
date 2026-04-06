@@ -75,7 +75,7 @@ Build the X audience first before expanding to other platforms.
 
 ## PLAYBOOK UPDATE CYCLE
 Updated automatically via **Refresh Playbooks** in the dashboard. The command:
-1. Fetches recent posts from benchmark accounts (@Iyervval, @ruchirsharma_1, @mujifren)
+1. Fetches recent posts from benchmark accounts (@karpathy, @paraschopra, @sidin)
 2. Loads the last 20 published posts from the queue
 3. Appends a dated "Trend Update" section with 3-5 actionable insights
 

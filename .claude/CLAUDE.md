@@ -12,7 +12,7 @@ A config-driven, AI-assisted Twitter/X content engine. Built as a portfolio proj
 
 | Current value | Replace with |
 |---|---|
-| `"laajardni"` (in `config.json`) | `"YOUR_HANDLE"` |
+| `"YOUR_HANDLE"` (in `config.json`) | your X handle |
 | `"Sud"` (in `config.json`) | `"Your Name"` |
 | Profile URL in `config.json` | `"https://x.com/YOUR_HANDLE"` |
 
@@ -89,7 +89,7 @@ Flask server on port 3000 (configurable via `DASHBOARD_PORT` env var). MCP serve
 | `docs/playbooks/voice-playbook-sud.md` | Tone laws, signature patterns, per-pillar voice notes |
 | `docs/playbooks/twitter-playbook-sud.md` | Format mix, hook rules, per-pillar hook formulas |
 | `docs/playbooks/x-posts-strategy-sud.md` | Pillar table, funnel definitions, repurposing system |
-| `docs/competitive-benchmark-sud.md` | Framework for @Iyervval, @ruchirsharma_1, @mujifren — live data populated by playbook_refresher on first run |
+| `docs/competitive-benchmark-sud.md` | Framework for @karpathy, @paraschopra, @sidin — live data populated by playbook_refresher on first run |
 
 ---
 
