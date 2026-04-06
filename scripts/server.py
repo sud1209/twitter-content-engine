@@ -21,7 +21,7 @@ def _run_posts_pipeline():
         from scripts.cadence import get_todays_pillar
         from scripts.trend_scanner import get_all_topics, rank_pillars, rank_topics, build_trend_context
         from scripts.content_generator import generate
-        from scripts.post_scorer import regenerate_if_below_floor
+        from scripts.post_scorer import score_all_posts
         from scripts.post_queue import add_post
 
         # Clear non-published posts before generating fresh batch
@@ -59,8 +59,9 @@ def _run_posts_pipeline():
                 "score_breakdown": None,
                 "status": "pending_score",
             }
-            primary_candidates.append(regenerate_if_below_floor(post))
+            primary_candidates.append(post)
 
+        primary_candidates = score_all_posts(primary_candidates)
         primary_candidates.sort(key=lambda p: p.get("score") or 0, reverse=True)
         all_posts.extend(primary_candidates[:5])
 
@@ -84,8 +85,9 @@ def _run_posts_pipeline():
                         "score_breakdown": None,
                         "status": "pending_score",
                     }
-                    np_candidates.append(regenerate_if_below_floor(post))
+                    np_candidates.append(post)
 
+                np_candidates = score_all_posts(np_candidates)
                 np_candidates.sort(key=lambda p: p.get("score") or 0, reverse=True)
                 all_posts.append(np_candidates[0])
             except Exception as e:
@@ -305,14 +307,14 @@ def create_app() -> Flask:
 def _rescore_post(post_id: str) -> None:
     """Re-score a single edited post."""
     import threading
-    from scripts.post_scorer import score_post
+    from scripts.post_scorer import regenerate_if_below_floor
     from scripts.post_queue import load_queue, save_queue
 
     def rescore():
         queue = load_queue()
         for i, post in enumerate(queue):
             if post["id"] == post_id and post["status"] == "pending_score":
-                queue[i] = score_post(post)
+                queue[i] = regenerate_if_below_floor(post)
                 save_queue(queue)
                 return
 

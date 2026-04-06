@@ -83,8 +83,8 @@ def test_generate_pipeline_produces_eight_posts(tmp_path, monkeypatch):
         return [f"post {i} for {pillar}" for i in range(num_drafts)]
 
     monkeypatch.setattr("scripts.content_generator.generate", fake_generate)
-    monkeypatch.setattr("scripts.post_scorer.regenerate_if_below_floor",
-                        lambda post: {**post, "score": 8.0, "status": "scored"})
+    monkeypatch.setattr("scripts.post_scorer.score_all_posts",
+                        lambda posts: [{**post, "score": 8.0, "status": "scored"} for post in posts])
 
     from scripts.server import _run_posts_pipeline
     _run_posts_pipeline()
