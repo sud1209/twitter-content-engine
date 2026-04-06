@@ -49,3 +49,49 @@ def test_load_report_returns_none_when_missing(tmp_path, monkeypatch):
     )
     from scripts.benchmark_analyzer import load_report
     assert load_report() is None
+
+
+def test_fetch_own_stats_url_contains_config_handle():
+    from scripts.benchmark_analyzer import fetch_own_stats
+    published_post = {
+        "status": "published",
+        "id": "123456",
+        "text": "A test tweet about something interesting",
+        "actual_engagement": {"likes": 10, "retweets": 2, "replies": 1, "quotes": 0},
+    }
+    with patch("scripts.benchmark_analyzer.load_queue", return_value=[published_post]):
+        with patch("scripts.benchmark_analyzer.get_config", return_value={"handle": "testuser"}):
+            stats = fetch_own_stats()
+    assert len(stats["top_posts"]) > 0
+    assert "testuser" in stats["top_posts"][0]["url"]
+
+
+def test_extract_insights_calls_llm_with_config_model():
+    from scripts.benchmark_analyzer import extract_insights
+    llm_response = '{"hook_patterns": ["test hook"], "specificity_techniques": [], "cta_patterns": [], "engagement_drivers": []}'
+    with patch("scripts.benchmark_analyzer.llm_complete", return_value=llm_response) as mock_llm:
+        with patch("scripts.benchmark_analyzer.get_config", return_value={
+            "models": {"scoring": "claude-haiku-4-5-20251001"},
+            "benchmark_accounts": ["acc1"],
+        }):
+            result = extract_insights([{"account": "acc1", "score": 100, "text": "test post"}])
+    assert "hook_patterns" in result
+    mock_llm.assert_called_once()
+    _, kwargs = mock_llm.call_args
+    assert kwargs.get("model") == "claude-haiku-4-5-20251001"
+
+
+def test_extract_insights_returns_empty_dict_on_llm_failure():
+    from scripts.benchmark_analyzer import extract_insights
+    with patch("scripts.benchmark_analyzer.llm_complete", side_effect=Exception("API error")):
+        with patch("scripts.benchmark_analyzer.get_config", return_value={
+            "models": {"scoring": "claude-haiku-4-5-20251001"},
+            "benchmark_accounts": ["acc1"],
+        }):
+            result = extract_insights([{"account": "acc1", "score": 100, "text": "test"}])
+    assert result == {
+        "hook_patterns": [],
+        "specificity_techniques": [],
+        "cta_patterns": [],
+        "engagement_drivers": [],
+    }
