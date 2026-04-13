@@ -18,3 +18,6 @@ __pycache__/
 docs/superpowers/
 .claude/settings.json
 config.json
+
+# Internal reference docs (not user-facing)
+INTERNALS.md
