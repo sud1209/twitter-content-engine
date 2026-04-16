@@ -21,4 +21,3 @@ config.json
 
 # Internal reference docs (not user-facing)
 INTERNALS.md
-docs/INTERVIEW-QA.md
